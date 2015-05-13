@@ -1,0 +1,29 @@
+/* Move down content because we have a fixed navbar that is 50px tall */
+body {
+  padding-top: 50px;
+  padding-bottom: 20px;
+}
+
+.jumbotron {
+    background-image: url("http://calenarts.com/wp-content/uploads/2014/09/bg.jpg");
+    background-color: #cccccc;
+  	background-position: center; 
+    color:white;  
+} 
+
+.jumbotron-bis{
+    background-image: url("http://calenarts.com/wp-content/uploads/2014/09/bg.jpg");
+    background-color: #cccccc;
+    color:white;  
+
+}
+
+.signin{
+	text-align:center;
+	color: black;
+
+
+}
+.signin input{
+	max-width: 100 px;
+}

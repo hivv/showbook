@@ -32,7 +32,7 @@
                 url: "/login",        
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
-                //data: "Pseudo="+Pseudo+"&Password="+Password,
+                //data: "Pseudo="+Pseudo+"&Passwbuttonord="+Password,
                 data: JSON.stringify({
 					Pseudo: Pseudo,
 					Password: Password
@@ -47,7 +47,22 @@
 					alert("défaut");
 				}             
 			});
-		}         
+		}  
+		
+		window.onload=function (){
+			$('a#calculate').bind('click', function() {
+			$.getJSON($SCRIPT_ROOT + '/_get_event_name', {
+			a:1
+      }, function(data) {
+        $("#result").text(data.result);
+			var name='Hearscape';
+			var pic='index_fichiers/2800781.png';
+			var html ='<h2>'+name+'</h2> <img src="'+pic+'"'+' alt="Show"> <br><br> <p><a class="btn btn-default" href="#" role="button">Book »</a></p>';
+			var results = document.getElementById('ololo');
+			results.innerHTML += html;
+			console.log(html);
+			console.log(results.innerHTML);
+		}       
 	</script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -97,11 +112,8 @@
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
-        <div class="col-md-4">
-          <h2>Hearscape</h2>
-          <img src="index_fichiers/2800781.png" alt="Show">
-          <br><br>
-          <p><a class="btn btn-default" href="#" role="button">Book »</a></p>
+        <div class="col-md-4" id="ololo">
+
         </div>
         <div class="col-md-4">
           <h2>Heading</h2>

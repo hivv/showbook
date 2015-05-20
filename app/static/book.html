@@ -16,6 +16,7 @@
     <!-- Custom styles for this template -->
     <link href="index_fichiers/jumbotron.css" rel="stylesheet">
     <script src="book.js"></script>
+    <script src="logout.js"></script>
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="index_fichiers/ie-emulation-modes-warning.js"></script>
@@ -36,7 +37,6 @@
                 url: "/users",        
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
-                //data: "Pseudo="+Pseudo+"&Password="+Password,
                 data: JSON.stringify({
 					Token: tok,
 				}),
@@ -83,11 +83,11 @@
 					var res2=document.getElementById('plan');
 					res2.innerHTML+=txtPlan;
 					console.log(data.c2);
-					var cat= '<select name="Category" id="catChoose"> <option value="1">'+data.c1 +'</option>';
+					var cat= '<select name="Category" id="catChoose"> <option value="'+data.c1+'">'+data.c1 +'</option>';
 					if(data.c2!=null){
-						cat += '<option value="2">'+data.c2+'</option>';
+						cat += '<option value="'+data.c2+'">'+data.c2+'</option>';
 						if(data.c3!=null){
-							cat += '<option value="3">'+data.c3+'</option>';
+							cat += '<option value="'+data.c3+'">'+data.c3+'</option>';
 						}
 					}
 
@@ -101,7 +101,7 @@
 		}
 		
     </script>
-    <script src="/book.js" type "text/javacript"></script>
+	
   </head>
 
   <body>
@@ -122,7 +122,7 @@
         <div id="navbar" class="navbar-collapse collapse">
 			
            <div id="salutUser"></div>
-         <button type="button" class="logout" id="logOut" onclick="signUpResult()" >Log Out</button> 
+         <button type="button" class="logout" id="logOut" onclick="LogOut()" >Log Out</button> 
           
         </div><!--/.navbar-collapse -->
         			

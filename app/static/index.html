@@ -32,7 +32,6 @@
                 url: "/login",        
                 dataType: "json",
                 contentType: "application/json; charset=utf-8",
-                //data: "Pseudo="+Pseudo+"&Password="+Password,
                 data: JSON.stringify({
 					Pseudo: Pseudo,
 					Password: Password
@@ -45,12 +44,9 @@
 							// Store
 							localStorage.setItem("token", data['token']);
 							document.location.href="logged.html" ;
-							// Retrieve
-							//document.getElementById("result").innerHTML = localStorage.getItem("lastname");
 						} else {
 							document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
 						}
-						//document.location.href="logged.html" ;
 					}
 					else {
 						alert(data['result']);

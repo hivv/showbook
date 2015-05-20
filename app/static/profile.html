@@ -19,6 +19,7 @@
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="index_fichiers/ie-emulation-modes-warning.js"></script>
+    <script src="logout.js"></script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -55,7 +56,7 @@
             dataType: "json",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-				Token: tok,
+				Token: tok
 			}),
 			success: function(data){
 				var html='<h1 align="center">Hi, ' +data['login']+'</h1>'+'<div class="infos"><h3> My personal informations</h3><p><strong>First Name:</strong>' +data['name']+'</p><p><strong>Surname:</strong>'+ data['surname']+'</p><p><strong>E-mail:</strong>' +data['email']+'</p> <p><strong>Birthdate:</strong>'+data['date']+'</p> <p><strong>Phone Number:</strong>'+ data['phone']+'</p>'
@@ -64,7 +65,8 @@
 				console.log(data['name'],data['surname'],data['email'],data['date'],data['phone']);
 			},
 			error:function(){
-					alert("Token non valide");
+					//alert("Token non valide");
+					LogOut();
 			},
 			default: function(){
 					alert("défaut");
@@ -76,11 +78,26 @@
             dataType: "json",
             contentType: "application/json; charset=utf-8",
             data: JSON.stringify({
-				Token: tok,
+				Token: tok
 			}),
 			success: function(data){
 				var html= '<table class="table table-striped"><thead><tr><th>Name</th><th>Date</th><th>Venue</th><th>Categorie</th><th>Number of tickets</th><th>Who will I meet?</th></tr></thead>'
-				console.log(data['name']);
+				console.log(data);
+				console.log(data[0]['name']);
+				l = data.length;
+				html += '<tbody>';
+				for(i=0; i<l; i++) {
+					html += '<tr><td>'+data[i]['name']+'</td>';
+					//date = data[i]['date'].split("-")
+					html += '<td>'+data[i]['date']+'</td>';
+					html += '<td>'+data[i]['salle']+'</td>';
+					html += '<td>'+data[i]['categorie']+'</td>';
+					html += '<td>'+	data[i]['places']+'</td>';
+					html += '<td>null</td></tr>';
+				}
+				html += ' </tbody>'
+				var results= document.getElementById('MyShows');
+				results.innerHTML += html;  
 			}
 		});
 		
@@ -105,7 +122,7 @@
         </div>
         <div id="navbar" class="navbar-collapse collapse">
 			<div id="salutUser"></div>
-        	<button type="button" class="logout" id="logOut" onclick="signUpResult()" >Log Out</button> 
+        	<button type="button" class="logout" id="logOut" onclick="LogOut()" >Log Out</button> 
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
@@ -119,44 +136,9 @@
 		<div id="profile">  
        </div>
       
-		<div class="ushows">
-      <h3>My Upcoming Shows</h3>
-      <div id="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Date</th>
-                  <th>Venue</th>
-                  <th>Categorie</th>
-                  <th>Number of tickets</th>
-                  <th>Who will I meet?</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Hearscape</td>
-                  <td>02/05/2015</td>
-                  <td>Theatre machin</td>
-                  <td>Upper Circle</td>
-                  <td>2</td>
-                  <td>Samantha 0606060606</td>
-                </tr>
-                <tr>
-                  <td>Rolling Stones</td>
-                  <td>12/06/2015</td>
-                  <td>The Great Hall Stadium</td>
-                  <td>Stalls</td>
-                  <td>1</td>
-                  <td>Britney 060505050505</td>
-                </tr>
-               
-              </tbody>
-            </table>
-          </div>
-    
-      
-      </div>
+		<div id="MyShows">
+			<h3>My Upcoming Shows</h3>
+		</div>
     </div>
 
       <hr>

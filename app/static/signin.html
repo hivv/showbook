@@ -47,7 +47,6 @@
 					url: "/signUp",        
 					dataType: "json",
 					contentType: "application/json; charset=utf-8",
-					//data: "Pseudo="+Pseudo+"&Password="+Password,
 					data: JSON.stringify({
 						Pseudo: Pseudo,
 						FirstName: FirstName,
@@ -142,7 +141,7 @@
             <input placeholder="Phone Number" class="form-control" type="tel" id="PhoneNumber" onBlur="verifNum(this)">
             <p>  <font color="white">The perfect show's night...</font>
               <select name="type">
-                <option value="low">Enjoying the show, then bed!</option>
+                <option value="Low">Enjoying the show, then bed!</option>
                 <option value="Medium">Eating together, Enjoying the show, then bed!</option>
                 <option value="Hight">Enjoying the Show, Having a beer, and have fun!</option>
                 <option value="VeryHight">Enjoying the Show and after all night long!</option>

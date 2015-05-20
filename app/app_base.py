@@ -4,7 +4,8 @@ from flask  import *
 from sqlalchemy import *
 from markdown import markdown
 import os, hashlib
-import datetime; 
+import datetime
+from time import strftime
 from sqlalchemy.ext.automap import automap_base
 from itsdangerous import (TimedJSONWebSignatureSerializer as Serializer, BadSignature, SignatureExpired)
 
@@ -56,7 +57,7 @@ salles = Table('salles', metadata,
 reservations = Table('reservations', metadata,
 	Column('id_Event', Integer, ForeignKey('events.id')),
 	Column('id_User', Integer, ForeignKey('users.id')),
-	Column('id_Cat', Integer, nullable=False), 
+	Column('id_Cat', String, nullable=False), 
 	Column('Social', Integer, nullable=False),
 	Column('places_reserves', Integer, nullable=False))
 
@@ -78,26 +79,6 @@ db.execute(events.insert().values(name='Archive',description='Archive is an Engl
 
 
 db.close()
-
-# ............................................................................................... #
-
-#def page_content(name):
-	#db = engine.connect()
-	#try:
-		#row = db.execute(select([pages.c.text]).where(pages.c.name == name)).fetchone()
-		#if row is None:
-			#return '**(This page is empty or does not exist.)**'
-		#return row[0]
-	#finally:
-		#db.close()
-
-#def delete_page(name):
-	#db = engine.connect()
-	#try:
-		#if db.execute(select([pages.c.name]).where(pages.c.name == name)).fetchone() != None:
-			#db.execute(pages.delete().where(pages.c.name == name))
-	#finally:
-		#db.close()
 
 
 
@@ -145,10 +126,12 @@ def findShows(username):
 	db = engine.connect()
 	try :
 		if db.execute(select([users.c.login]).where(users.c.login == username)).fetchone() != None:
-			sel = select([events.c.name, events.c.date, reservations.c.places_reserves]).where(and_(users.c.login == username, users.c.id == reservations.c.id_User, events.c.id == reservations.c.id_Event, events.c.salle == salles.c.id))
+			sel = select([events.c.name, events.c.date, salles.c.name, reservations.c.places_reserves, reservations.c.id_Cat]).where(and_(users.c.login == username, users.c.id == reservations.c.id_User, events.c.id == reservations.c.id_Event, events.c.salle == salles.c.id))
 			show = db.execute(sel)
+			liste = []
 			for row in show :
-				return row
+				liste.append(row)
+			return liste
 		else :
 			return None
 	finally :
@@ -272,7 +255,7 @@ def profile():
 	else :
 		return redirect('/')
 
-@app.route('/shows', methods=['Post'])
+@app.route('/shows', methods=['POST'])
 def shows():
 	content = request.get_json(force=True)
 	tok = content['Token']
@@ -280,7 +263,10 @@ def shows():
 	if user != None :
 		res = findShows(user)
 		print res
-		return json.dumps({'name':res[0]})
+		resultat = []
+		for row in res:
+			resultat.append({'name':row[0], 'date':row[1].strftime("%d/%m/%y"), 'salle':row[2], 'places':row[3], 'categorie':row[4]})
+		return json.dumps(resultat, separators=(',',':'))
 	else :
 		return redirect('/')
 	
@@ -308,7 +294,6 @@ def infos():
 def book():
 	db=engine.connect()
 	idShow=request.args.get('n',0,type=int)
-	print "uhuhuhuh",idShow
 	try :
 		s=select([events.c.name, events.c.date, events.c.img, events.c.description, events.c.salle]).where(events.c.id==idShow)
 		result=db.execute(s)
@@ -342,13 +327,6 @@ def bookEngine():
 	return json.dumps({'success':True, 'token' : "coucou", 'result':mess})
 	#else: 		
 	#	return json.dumps({'success':False, 'result':res[1]})
-
-	
-@app.route('/logout')
-def logout():
-    from_page = request.args.get('from', 'Main')
-    session.clear()
-    return redirect('/pages/' + from_page)
 
 # ............................................................................................... #
 

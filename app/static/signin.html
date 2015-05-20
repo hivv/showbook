@@ -26,6 +26,8 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     <script type=text/javascript>
+		var err=0;
+
 		function signUpResult() {
               var Pseudo = $('#Pseudo').val();
               var FirstName = $('#FirstName').val();
@@ -34,29 +36,54 @@
               var Password = $('#Password').val();
               var YearOfBirth = $('#YearOfBirth').val(); 
               var PhoneNumber = $('#PhoneNumber').val();
+              if(Pseudo=='' || FirstName=='' || Surname=='' || Email=='' || Password=='' || YearOfBirth=='' || PhoneNumber==''){
+				   document.getElementById("generalError").innerHTML ='<div class="alert alert-error"><a href="#" class="close" data-dismiss="alert">&times;</a> <strong>Warning!</strong> All the fields must be fullfiled </div>';
+			}else if(err>0){
+				document.getElementById("generalError").innerHTML ='<div class="alert alert-error"><a href="#" class="close" data-dismiss="alert">&times;</a> <strong>Warning!</strong> You must enter valid data in each fields! </div>';
+			}else{
                
-              $.ajax({
-				type:"POST",
-                url: "/signUp",        
-                dataType: "json",
-                contentType: "application/json; charset=utf-8",
-                //data: "Pseudo="+Pseudo+"&Password="+Password,
-                data: JSON.stringify({
-					Pseudo: Pseudo,
-					FirstName: FirstName,
-					Surname: Surname,
-					Email: Email,
-					Password: Password,
-					YearOfBirth: YearOfBirth,
-					PhoneNumber: PhoneNumber
-				}),
-                success: function(){
-					document.location.href="logged.html" ;  
-				},
-				error:function(){
-					alert("Mauvais login ou mdp");
-				}              
-			});
+				  $.ajax({
+					type:"POST",
+					url: "/signUp",        
+					dataType: "json",
+					contentType: "application/json; charset=utf-8",
+					//data: "Pseudo="+Pseudo+"&Password="+Password,
+					data: JSON.stringify({
+						Pseudo: Pseudo,
+						FirstName: FirstName,
+						Surname: Surname,
+						Email: Email,
+						Password: Password,
+						YearOfBirth: YearOfBirth,
+						PhoneNumber: PhoneNumber
+					}),
+					success: function(data){
+						if ( data['success']) { 
+							console.log(data['token']);
+							// Check browser support
+							if (typeof(Storage) != "undefined") {
+								// Store
+								localStorage.setItem("token", data['token']);
+								document.location.href="logged.html" ;
+								// Retrieve
+								//document.getElementById("result").innerHTML = localStorage.getItem("lastname");
+							} else {
+								document.getElementById("result").innerHTML = "Sorry, your browser does not support Web Storage...";
+							}
+							//document.location.href="logged.html" ;
+						}
+						else {
+							document.getElementById("generalError").innerHTML ='<div class="alert alert-error"><a href="#" class="close" data-dismiss="alert">&times;</a> <strong>Warning!</strong> Ths Pseudo is already taken...</div>';
+
+						}	
+					},
+					error:function(){
+						alert("Mauvais login ou mdp");
+					},
+					timeout: 3000              
+				
+				});
+			}
 		}         
 	</script>
     
@@ -86,7 +113,7 @@
             <div class="form-group">
               <input placeholder="Password" class="form-control" type="password">
             </div>
-            <button type="submit" class="btn btn-success">log in</button>
+            <button type="button" class="btn btn-success">log in</button>
           </form>
         </div><!--/.navbar-collapse -->
       </div>
@@ -98,14 +125,21 @@
         <h1>ShowBook</h1>
       </div>
             <div class="signin">
-        <form>
+		<div id='generalError'></div>
+        <form><div class="alert-warning">  </a> <strong>Verification </strong> <div id='PseudoMess'></div>
+
+        <div id='MailMess'></div>
+
+			<div id='AgeMess'></div>
+			<div id='TelMess'></div>
+			</div>
 			<input placeholder="Pseudo" class="form-control" type="text" id="Pseudo" onBlur="verifPseudo(this)">
             <input placeholder="First Name" class="form-control" type="text" id="FirstName">
             <input placeholder="Surname" class="form-control" type="text" id="Surname">
             <input placeholder="E-Mail" class="form-control" type="email" id="Email" onBlur="verifMail(this)">
             <input placeholder="Password" class="form-control" type="password" id="Password">
             <input placeholder="Year of Birth" class="form-control" type="number" min="1918" max="1997" id="YearOfBirth" onBlur="verifYear(this)">
-            <input placeholder="Phone Number" class="form-control" type="tel" id="PhoneNumber">
+            <input placeholder="Phone Number" class="form-control" type="tel" id="PhoneNumber" onBlur="verifNum(this)">
             <p>  <font color="white">The perfect show's night...</font>
               <select name="type">
                 <option value="low">Enjoying the show, then bed!</option>
@@ -115,7 +149,7 @@
               </select>
             </p>
           </br>
-           <button type="submit" class="btn btn-success" id="signUp" onclick="signUpResult()">Submit</button>
+           <button type="button" class="btn btn-success" id="signUp" onclick="signUpResult()">Submit</button>
 
 
 

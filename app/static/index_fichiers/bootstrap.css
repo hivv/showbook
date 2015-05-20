@@ -5397,7 +5397,12 @@ a.thumbnail.active,a.thumbnail:focus,a.thumbnail:hover{
 	background-color:#dff0d8;
 	border-color:#d6e9c6
 }
-
+.alert-danger,
+.alert-error {
+color: #b94a48;
+background-color: #f2dede;
+border-color: #eed3d7;
+}
 .alert-success hr{
 	border-top-color:#c9e2b3
 }

@@ -15,16 +15,93 @@
 
     <!-- Custom styles for this template -->
     <link href="index_fichiers/jumbotron.css" rel="stylesheet">
-
+    <script src="book.js"></script>
     <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="index_fichiers/ie-emulation-modes-warning.js"></script>
-
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+   
+    <script>
+		var pseudo;
+		var name;
+		window.onload=function(){
+			
+			var tok=localStorage.getItem("token");
+			$.ajax({
+				type:"POST",
+                url: "/users",        
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                //data: "Pseudo="+Pseudo+"&Password="+Password,
+                data: JSON.stringify({
+					Token: tok,
+				}),
+                success: function(data){
+					pseudo=data['username'];
+					var html= ' <a class="pseudo navbar-right" href="profile.html">Hi, '+data['username']+'</a>';
+					//var html='hellloo';
+					console.log(html);
+					var results= document.getElementById('salutUser');
+					results.innerHTML += html;
+				},
+				error:function(){
+					alert("Token non valide");
+					document.location.href="index.html" 
+				},
+				default: function(){
+					alert("défaut");
+					document.location.href="index.html" 
+				}             
+			});
+			var a=localStorage.getItem("numShow");
+				 $.getJSON('/_get_events_book/',{n: a	},function(data){
+				//type: "GET",
+				//url: $SCRIPT_ROOT + "/_get_events_infos/",
+				//contentType: "application/json; charset=utf-8",
+				//success: function(data) {
+					console.log(data.name);
+					name=data.name;
+					var pic=data.img;
+					var date=data.date;
+					var html3 ='<h2>'+name+'</h2><img src="'+pic+'" alt="Show" height="190" width="135"> <br><br><p>'+date +'- 22h</p>';
+					var results3 = document.getElementById('evinfos');
+					var desc='<p>'+data.desc+'</p>';
+					var res3=document.getElementById('description');
+					results3.innerHTML += html3;
+					res3.innerHTML+=desc;
+					var nameSalle=data.nomSalle;
+					var lien=data.link;
+					var plan=data.plan;
+					var idVen= '<p>Venue: <a href="'+lien+'">'+nameSalle+' </a> </p>'
+					var res1=document.getElementById('idVenue');
+					res1.innerHTML += idVen;
+					var txtPlan='<img src="'+data.plan+'" class="img-responsive">';
+					var res2=document.getElementById('plan');
+					res2.innerHTML+=txtPlan;
+					console.log(data.c2);
+					var cat= '<select name="Category" id="catChoose"> <option value="1">'+data.c1 +'</option>';
+					if(data.c2!=null){
+						cat += '<option value="2">'+data.c2+'</option>';
+						if(data.c3!=null){
+							cat += '<option value="3">'+data.c3+'</option>';
+						}
+					}
+
+					data+='</select>';
+					var rescat=document.getElementById('cat');
+					rescat.innerHTML +=cat;
+					
+					
+				});
+
+		}
+		
+    </script>
+    <script src="/book.js" type "text/javacript"></script>
   </head>
 
   <body>
@@ -39,14 +116,12 @@
             <span class="icon-bar"></span>
           </button>
          
-          <a class="navbar-brand" href="index.html">Home</a>
+          <a class="navbar-brand" href="logged.html">Home</a>
         </div>
          
         <div id="navbar" class="navbar-collapse collapse">
-
-                 <div id="navbar" class="navbar-collapse collapse">
 			
-          <a class="pseudo navbar-right" href="profile.html">Hi, Pseudo</a>
+           <div id="salutUser"></div>
          <button type="button" class="logout" id="logOut" onclick="signUpResult()" >Log Out</button> 
           
         </div><!--/.navbar-collapse -->
@@ -64,60 +139,56 @@
     <div class="container">
       <!-- Example row of columns -->
       <div class="row">
-        <div class="col-md-4">
-          <h2>Hearscape</h2>
-          <img src="index_fichiers/2800781.png" alt="Show">
-          <br><br>
-          <p>02/05/2015 - 22h</p>
+        <div class="col-md-4", id="evinfos">
+
         </div>
         <div class="col-md-4">
           <form>
           <h2>Where?</h2>
-          <p>Venue: <a href="http://www.theatreroyalwakefield.co.uk/">Theatre Royal Wakefield </a> </p>
+          <div id='idVenue'></div>
+         
           <p>Choose your ticket's category</p>
           <p><button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal">Sitting Plan</button>
 
             <div id="myModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
               <div class="modal-dialog">
                 <div class="modal-content">
-                    <div class="modal-body">
-                        <img src="http://www.theatreroyalwakefield.co.uk/_images/_common/mps_seatingplan.gif" class="img-responsive">
+                    <div class="modal-body" id="plan">
+
                     </div>
                 </div>
               </div>
             </div>
           </p>
-              <select name="Category">
-                <option value="1">Stalls (35€)</option>
-                <option value="2">Dress Circle (30€)</option>
-                <option value="3">Upper Circle (25€)</option>
-              </select>
+          <div id="cat">
 
+		</div>
        </div>
         <div class="col-md-4">
           <h2>How?</h2>
           <p>How many tickets do you want?</p>
-              <select name="Number">
+              <select name="Number" id='nbpl'>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
                 <option value="4">4</option>
               </select>
           <p>I want ShowBook to find me people to go to the show with</p>
-              <select name="SBMatch">
-                <option value="Yes">Yes</option>
-                <option value="No">No</option>
+              <select name="SBMatch" id="soc">
+                <option value=1>Yes</option>
+                <option value=0>No</option>
               </select>
             </br></br>
-          <p><a class="btn btn-default" href="#" role="button">Book Now »</a></p>
+          <p><a class="btn btn-default" href="#" role="button" onclick="book()">Book Now »</a></p>
+          <div id='result'></div>
         </div>
       </form>
       <br/>
       <div class="col-md-11">
         <h2>What?</h2>
-        <p>Hearscape is a band blablablablabla the whow will be cool etc etc etc etc etc desc</p>
+       <div id='description'></div> 
       </br>
-      <img src="http://i.ytimg.com/vi/vdo_FQqDq34/maxresdefault.jpg" alt="Live" height="200" >
+
       </div>
       </div>
 

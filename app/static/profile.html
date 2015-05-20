@@ -38,7 +38,7 @@
 				Token: tok,
 			}),
             success: function(data){
-				var html= ' <a class="pseudo navbar-right" href="profile.html">Hi, '+data['username']+'</a>';
+				var html= ' <a class="pseudo-navbar-right" href="profile.html" style="float: right">Hi, '+data['username']+'</a>';
 				console.log(html);
 				var results= document.getElementById('salutUser');
 					results.innerHTML += html;
@@ -104,7 +104,7 @@
 	}         
 			
 	</script>
-    
+    <script src='about.js'></script>
   </head>
 
   <body>
@@ -126,7 +126,7 @@
         </div><!--/.navbar-collapse -->
       </div>
     </nav>
-
+<div id="classAbout">
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron-bis">
       <div class="container">
@@ -140,11 +140,12 @@
 			<h3>My Upcoming Shows</h3>
 		</div>
     </div>
-
+</div>
       <hr>
 
       <footer>
         <p>©2015 ShowBook by Nader Hariri, Mihai Indricean, Razvan Vatafu & Tristan Velardo</p>
+        <a href="#" onClick="about()">About</a>
       </footer>
     </div> <!-- /container -->
 

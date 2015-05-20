@@ -27,6 +27,7 @@
     <![endif]-->
     <script src="book.js"></script>
     <script src="logout.js"></script>
+    <script src="about.js"></script>
     <script>
 	function setShow(num){
 		localStorage.setItem("numShow", num);
@@ -46,8 +47,7 @@
 				}),
                 success: function(data){
 					pseudo=data['username'];
-					var html= ' <a class="pseudo navbar-right" href="profile.html">Hi, '+data['username']+'</a>';
-					//var html='hellloo';
+				var html= ' <a class="pseudo-navbar-right" href="profile.html" style="float: right">Hi, '+data['username']+'</a>';					//var html='hellloo';
 					console.log(html);
 					var results= document.getElementById('salutUser');
 					results.innerHTML += html;
@@ -92,7 +92,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Home</a>
+          <a class="navbar-brand" href="#" onClick='window.location.reload()'>Home</a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
 		  <div id="salutUser"></div>
@@ -103,7 +103,7 @@
       </div>
       
     </nav>
-
+	<div id="classAbout">
     <!-- Main jumbotron for a primary marketing message or call to action -->
     <div class="jumbotron-bis">
       <div class="container">
@@ -116,11 +116,12 @@
       <div class="row" id="events">
         
       </div>
-
+</div>
       <hr>
 
       <footer>
         <p>©2015 ShowBook by Nader Hariri, Mihai Indricean, Razvan Vatafu & Tristan Velardo</p>
+        <a href="#" onClick="about()">About</a>
       </footer>
     </div> <!-- /container -->
 

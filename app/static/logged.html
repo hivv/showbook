@@ -60,22 +60,6 @@
 					alert("défaut");
 				}             
 			});
-			/*for(i=0;i<3;i++){
-				$.getJSON('/_get_events_infos/',{n: i	},function(data){
-				//type: "GET",
-				//url: $SCRIPT_ROOT + "/_get_events_infos/",
-				//contentType: "application/json; charset=utf-8",
-				//success: function(data) {
-					console.log(data.name);
-					var name=data.name;
-					var pic=data.img;
-					var date=data.date;
-					var idShow=data.id;
-					var html =' <div class="col-md-4"><h2>'+name+'</h2> <img src="'+pic+'"'+' alt="Show" height="190" width="135"> <br><br> <p>'+date+'</p><p><a class="btn btn-default" href="#" role="button" onclick="setShow('+idShow+')">Book »</a></p></div>';
-					var results = document.getElementById('events');
-					results.innerHTML += html;
-				});
-			}*/
 			$.getJSON('/events',function(data){
 				var l = data.length;
 				for(i=0;i<l;i++) {
@@ -85,7 +69,15 @@
 					date=data[i].date;
 					idShow=data[i].id;
 					console.log(idShow);
-					html =' <div class="col-md-4"><h2>'+name+'</h2> <img src="'+pic+'"'+' alt="Show" height="190" width="135"> <br><br> <p>'+date+'</p><p><a class="btn btn-default" href="#" role="button" onclick="setShow('+idShow+')">Book »</a></p></div>';
+					var salle;
+					if(data[i].venue===1){
+						salle='Theatre Royal Wakefield';
+					}else if(data[i].venue===2){
+						salle='Zenith de Paris';
+					}else{
+						salle='Barnfield Theatre';
+					}						
+					html =' <div class="col-md-4"><h2>'+name+'</h2> <img src="'+pic+'"'+' alt="Show" height="190" width="135"> <br><br> <p>'+date+' '+salle+'</p><p><a class="btn btn-default" href="#" role="button" onclick="setShow('+idShow+')">Book »</a></p></div>';
 					results = document.getElementById('events');
 					results.innerHTML += html;
 				}

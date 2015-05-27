@@ -58,7 +58,7 @@
 				}             
 			});
 			var a=localStorage.getItem("numShow");
-				 $.getJSON('/_get_events_book/',{n: a	},function(data){
+				 $.getJSON('/eventInfo/',{n: a	},function(data){
 					console.log(data.name);
 					console.log(data.c1);
 					name=data.name;

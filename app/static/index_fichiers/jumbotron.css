@@ -5,14 +5,14 @@ body {
 }
 
 .jumbotron {
-    background-image: url("http://calenarts.com/wp-content/uploads/2014/09/bg.jpg");
+    background-image: url("/static/img/background.jpg");
     background-color: #cccccc;
   	background-position: center; 
     color:white;  
 } 
 
 .jumbotron-bis{
-    background-image: url("http://calenarts.com/wp-content/uploads/2014/09/bg.jpg");
+    background-image: url("/static/img/background.jpg");
     background-color: #cccccc;
     color:white;  
 

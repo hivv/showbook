@@ -20,6 +20,9 @@
     <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
     <script src="index_fichiers/ie-emulation-modes-warning.js"></script>
     <script src="logout.js"></script>
+    <script type="text/javascript" src="signin.js"></script>
+ 
+  
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -27,6 +30,9 @@
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
     <script>
+		var mail;
+		var phone;
+		var err=0;	
 		window.onload=function(){
 		var tok=localStorage.getItem("token");
 		$.ajax({
@@ -61,7 +67,10 @@
 			success: function(data){
 				var html='<h1 align="center">Hi, ' +data['login']+'</h1>'+'<div class="infos"><h3> My personal informations</h3><p><strong>First Name:</strong>' +data['name']+'</p><p><strong>Surname:</strong>'+ data['surname']+'</p><p><strong>E-mail:</strong>' +data['email']+'</p> <p><strong>Birthdate:</strong>'+data['date']+'</p> <p><strong>Phone Number:</strong>'+ data['phone']+'</p>'
 				var results= document.getElementById('profile');
+				html += '<a class="btn btn-default" href="#" role="button" onclick="update()">Update Profile</a></p>';
 				results.innerHTML += html;  
+				mail = data['email'];
+				phone = data['phone'];
 				console.log(data['name'],data['surname'],data['email'],data['date'],data['phone']);
 			},
 			error:function(){
@@ -83,7 +92,7 @@
 			success: function(data){
 				var html= '<table class="table table-striped"><thead><tr><th>Name</th><th>Date</th><th>Venue</th><th>Categorie</th><th>Number of tickets</th><th>Who will I meet?</th></tr></thead>';
 				console.log(data);
-				console.log(data[0]['person']);
+
 				
 				l = data.length;
 				html += '<tbody>';
@@ -107,6 +116,43 @@
 		
 	}         
 			
+
+		function update(){
+			var html='<form><div class="alert-warning">  </a> <strong><div id="MailMess"></div><div id="TelMess"></div></div><br><br><br><input value="'+mail+'" class="form-control" type="email" id="Email" onBlur="verifMail(this)">';
+			html +='<input value="'+phone+'" class="form-control" type="tel" id="PhoneNumber" onBlur="verifNum(this)">';
+			html += '<br><p align ="center"><a class="btn btn-default" href="#" role="button" onclick="update_confirmation()">Validation</a></p></form>';
+			var results= document.getElementById('profile');
+			results.innerHTML = html;  
+
+		}
+		function update_confirmation() {
+			var Email = $('#Email').val();
+			var PhoneNumber = $('#PhoneNumber').val();
+			var tok=localStorage.getItem("token");
+			
+			if (err === 0){
+				console.log("hulala");	
+				$.ajax({
+					type:"POST",
+					url: "/user_update",        
+					dataType: "json",
+					contentType: "application/json; charset=utf-8",
+					data: JSON.stringify({
+						Token: tok,
+						Email: Email,
+						PhoneNumber: PhoneNumber
+					}),
+					success: function(data){
+						if (data['success']) {
+							document.location.href="profile.html" ;
+						}				
+					}
+				});
+			}
+		
+		}
+		
+		
 	</script>
     <script src='about.js'></script>
   </head>

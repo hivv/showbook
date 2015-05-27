@@ -3,6 +3,7 @@
 from flask  import *
 from sqlalchemy import *
 from markdown import markdown
+from math import fabs
 import os, hashlib
 import datetime
 from time import strftime
@@ -75,37 +76,32 @@ db = engine.connect();
 db.execute(users.insert().values(login='admin', password_hash=hashFor('admin')))
 db.execute(users.insert().values(login='aaa', password_hash=hashFor('aaa')))
 db.execute(salles.insert().values(name='Theatre Royal Wakefield', link='http://www.theatreroyalwakefield.co.uk',plan='/static/img/plan1.gif', c1='Stalls', c2='Dress Circle', c3='Upper Circle', n1=200, n2=150, n3=100, nb_places=450))
-db.execute(salles.insert().values(name='TBarnfield Theatre', link='http://www.barnfieldtheatre.org.uk/',plan='/static/img/plan2.jpg', c1='Unique Category', n1=300, nb_places=300))
-#db.execute(salles.insert().values(numero='S3', nb_places=20))
+db.execute(salles.insert().values(name='Zenith de Paris', link='http://www.zenith-paris.com',plan='/static/img/plan3.jpg', c1='Floor', c2='Bench', n1=400, n2=200, nb_places=600))
+db.execute(salles.insert().values(name='Barnfield Theatre', link='http://www.barnfieldtheatre.org.uk/',plan='/static/img/plan2.jpg', c1='Unique Category', n1=300, nb_places=300))
 db.execute(events.insert().values(name='Hearscape',description='Hearscape is cool but unknown', img='/static/img/hearscape.png',date=datetime.date(2015, 06, 21),salle=1))
-db.execute(events.insert().values(name='Rolling Stones',description='The Rolling Stones are one of the biggest Rock Band ever',img='/static/img/stones.jpg',date = datetime.date(2015,07,23),salle=2))
-db.execute(events.insert().values(name='Archive',description='Archive is an English trip-hop and progressive rock band very appreciated in France',img='/static/img/archive.jpg',date = datetime.date(2015,8,11),salle=2))
+db.execute(events.insert().values(name='Rolling Stones',description='The Rolling Stones are one of the biggest Rock Band ever',img='/static/img/stones.jpg',date = datetime.date(2015,07,23),salle=3))
+db.execute(events.insert().values(name='Archive',description='Archive is an English trip-hop and progressive rock band very appreciated in France',img='/static/img/archive.jpg',date = datetime.date(2015,8,11),salle=3))
+db.execute(events.insert().values(name='Slash',description='Slash has many hair and a beautiful guitar',img='/static/img/slash.jpg',date = datetime.date(2015,11,12),salle=2))
+db.execute(events.insert().values(name='Susan Boyle',description='Susan has eaten many things in her life',img='/static/img/boyle.jpg',date = datetime.date(2015,10,15),salle=1))
+db.execute(events.insert().values(name='Patrick Sebastien',description='Patrick Sebastien is a funny french guy',img='/static/img/sebastien.jpg',date = datetime.date(2015,12,25),salle=2))
 db.close()
 
 def matching(id_show,id_user) :
 	db = engine.connect()
-	print "jkasdbjfdhfjdklnfdklklklnfdlndsklndsn"
 	sel=select([users.c.date_naissance, users.c.Taste]).where(users.c.id == id_user)
 	match=db.execute(sel).fetchone()
 	birth = match[0]
 	choix = match[1]
-	print match
 	s = select([reservations.c.id, reservations.c.id_User,reservations.c.id_Event]).where(and_(reservations.c.user_meet == 0,reservations.c.Social == 1))
 	rows = db.execute(s)
 	print rows
 	for row in rows :
-		print row[1]
-		print "lolololololo"
+		
 		usr = select([users.c.date_naissance,users.c.Taste,users.c.id]).where(users.c.id == row[1])
-		us = db.execute(usr).fetchone()
-		print us[1]
-		print us[2]
-		if (us[1] == choix) and (us[0] == birth) and (us[2] != id_user) and (row[2] == id_show):
-			print "polplolo"
+		us = db.execute(usr).fetchone()	
+		if (us[1] == choix) and (fabs(us[0] - birth) <= 3 ) and (us[2] != id_user) and (row[2] == id_show):
 			db.execute(reservations.update().where(and_(reservations.c.id_User == id_user,reservations.c.id_Event == id_show)).values(user_meet = us[2]))
-			print "trololol"
 			db.execute(reservations.update().where(and_(reservations.c.id_User == us[2],reservations.c.id_Event == id_show)).values(user_meet = id_user))
-			print "cuci"
 			return 0
 		return 0;
 	db.close()
@@ -136,6 +132,19 @@ def signUp(login, nom, prenom, mail, password, date_naissance,telephone,taste):
 			return False
 	finally:
 		db.close()
+
+def updateUser(login,mail,phone):
+	db = engine.connect()
+	try :
+		if db.execute(select([users.c.login]).where(users.c.login == login)).fetchone() != None:
+			print login
+			db.execute(users.update().where(users.c.login == login).values( mail = mail, telephone = phone))
+			return True
+		else :
+			return False
+	finally:
+		db.close()
+		
 
 def retrieveProfile(username):
 	db = engine.connect()
@@ -217,19 +226,16 @@ def verify_auth_token(token):
 	try:
 		userData = s.loads(token)
 		user = userData['Pseudo']
-		print user
 		return user
 	except SignatureExpired:
-		print "erreur1"
 		return None
 	except BadSignature:
-		print "erreur2"
 		return None
 
 def findEvents():
 	db = engine.connect()
 	try:
-		sel = select([events.c.name, events.c.date, events.c.img, events.c.id])
+		sel = select([events.c.name, events.c.date, events.c.img, events.c.id, events.c.salle])
 		show = db.execute(sel)
 		liste = []
 		for row in show :
@@ -238,15 +244,40 @@ def findEvents():
 	finally:
 		db.close()
 
+def getEventInfo(idShow):
+	db=engine.connect()
+	try :
+		s=select([events.c.name, events.c.date, events.c.img, events.c.description, events.c.salle]).where(events.c.id==idShow)
+		row_one=db.execute(s).fetchone()
+		s=select([salles.c.name, salles.c.link, salles.c.plan, salles.c.c1,salles.c.c2, salles.c.c3,salles.c.n1,salles.c.n2,salles.c.n3]).where(salles.c.id==row_one[4])
+		row_two=db.execute(s).fetchone()
+		freePlaces = select([reservations.c.places_reserves, reservations.c.id_Cat]).where(reservations.c.id_Event == idShow)
+		result=db.execute(freePlaces)
+		
+		nb1 = row_two[6]
+		nb2 = row_two[7]
+		nb3 = row_two[8]
+		for row in result:
+			if row[1] == row_two[3]:
+				nb1 = nb1 - row[0]
+			elif row[1] == row_two[4]:
+				nb2 = nb2 - row[0]
+			else:
+				nb3 = nb3 - row[0]
+		return (row_one, row_two, nb1, nb2, nb3) 
+		{"name":row_one[0], "date":row_one[1].strftime('%d/%m/%Y'), "img":row_one[2], "desc":row_one[3], "nomSalle":row_two[0], "link":row_two[1], "plan":row_two[2], "c1":row_two[3], "c2":row_two[4], "c3":row_two[5],"nb1":nb1,"nb2":nb2,"nb3":nb3}
+	finally :
+		db.close()
 	
-#def updateUser(login, password, nom, prenom, mail, telephone, date_naissance):
-	#db = engine.connect()
-	#try:
-		#if db.execute(select([users.c.login]).where(users.c.login == login)).fetchone() != None:
-			#db.execute(users.update().values(nom=nom, prenom=prenom, mail=mail, telephone=telephone, 
-			#date_naissance==date_naissance).where(users.c.login == login))
-	#finally:
-		#db.close()
+def addEvent(name,description,img,year,month,day,salle):
+	db = engine.connect()
+	try:
+		db.execute(events.insert().values(name=name,description=description,img=img,date = datetime.date(year,month,day),salle=salle))
+		return True
+	except:
+		return False
+	finally:
+		db.close()
 
 # ............................................................................................... #
 
@@ -333,36 +364,14 @@ def event():
 	res = findEvents()
 	resultat = []
 	for row in res:
-		resultat.append({'name':row[0], 'date':row[1].strftime("%d/%m/%y"), 'img':row[2], 'id':row[3]})
+		resultat.append({'name':row[0], 'date':row[1].strftime("%d/%m/%y"), 'img':row[2], 'id':row[3],'venue':row[4]})
 	return json.dumps(resultat, separators=(',',':'))	
 
-@app.route('/_get_events_book/')
+@app.route('/eventInfo/', methods=['GET'])
 def eventInfo():
-	db=engine.connect()
 	idShow=request.args.get('n',0,type=int)
-	try :
-		s=select([events.c.name, events.c.date, events.c.img, events.c.description, events.c.salle]).where(events.c.id==idShow)
-		result=db.execute(s)
-		row_one=result.fetchone()
-		salle=select([salles.c.name, salles.c.link, salles.c.plan, salles.c.c1,salles.c.c2, salles.c.c3,salles.c.n1,salles.c.n2,salles.c.n3]).where(salles.c.id==row_one[4])
-		salle_res=db.execute(salle)
-		row_two=salle_res.fetchone()
-		
-		freePlaces = select([reservations.c.places_reserves, reservations.c.id_Cat]).where(reservations.c.id_Event == idShow)
-		result=db.execute(freePlaces)
-		nb1 = row_two[6]
-		nb2 = row_two[7]
-		nb3 = row_two[8]
-		for row in result:
-			if row[1] == row_two[3]:
-				nb1 = nb1 - row[0]
-			elif row[1] == row_two[4]:
-				nb2 = nb2 - row[0]
-			else:
-				nb3 = nb3 - row[0]
-	finally :
-		db.close()
-	ret_data={"name":row_one[0], "date":row_one[1].strftime('%d/%m/%Y'), "img":row_one[2], "desc":row_one[3], "nomSalle":row_two[0], "link":row_two[1], "plan":row_two[2], "c1":row_two[3], "c2":row_two[4], "c3":row_two[5],"nb1":nb1,"nb2":nb2,"nb3":nb3}
+	res = getEventInfo(idShow)
+	ret_data={"name":res[0][0], "date":res[0][1].strftime('%d/%m/%Y'), "img":res[0][2], "desc":res[0][3], "nomSalle":res[1][0], "link":res[1][1], "plan":res[1][2], "c1":res[1][3], "c2":res[1][4], "c3":res[1][5],"nb1":res[2],"nb2":res[3],"nb3":res[4]}
 	return jsonify(ret_data)
 
 @app.route('/book', methods=['POST'])
@@ -374,14 +383,37 @@ def bookEngine():
 		mess = 'The reservation has been processed and is now visible on your profile'
 	else:
 		mess = 'The reservation has failed. We apologize for the error.'
-	return json.dumps({'success':True, 'token' : "coucou", 'result':mess})
+	return json.dumps({'success':True, 'token' : generate_token(content['Pseudo']), 'result':mess})
+
+@app.route('/validate', methods=['POST'])
+def validerToken():
+	content = request.get_json(force=True)
+	res = verify_auth_token(content['token'])
+	if res is None:
+		return json.dumps({'success':False})
+	else:
+		return json.dumps({'success':True}) 
+
+@app.route('/user_update', methods=['POST']) 
+def userUpdate():
+	print "hihihi"
+	content = request.get_json(force=True)
+	tok = content['Token']
+	user = verify_auth_token(tok)
+	if user != None :
+		print user
+		res = updateUser(user,content['Email'],content['PhoneNumber'])
+		print res
+		return json.dumps({'success':res})
+	else :
+		return json.dumps({'success':False})
+
 
 # ............................................................................................... #
 
 if __name__ == '__main__':
 	app.run(debug=True)
 	#use_reloader=False
-
 # ............................................................................................... #
 
 

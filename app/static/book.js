@@ -25,7 +25,7 @@ function book(){
 				// Check browser support
 				if (typeof(Storage) != "undefined") {
 					// Store
-						//localStorage.setItem("token", data['token']);
+						localStorage.setItem("token", data['token']);
 					//document.location.href="logged.html" ;
 					// Retrieve
 					//document.getElementById("result").innerHTML = localStorage.getItem("lastname");

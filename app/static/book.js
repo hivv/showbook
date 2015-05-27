@@ -8,10 +8,9 @@ function book(){
 	document.getElementById("result").innerHTML = 'Booking... Please Wait...';	  
 	  $.ajax({
 		type:"POST",
-		url: "/booking_engine",        
+		url: "/book",        
 		dataType: "json",
 		contentType: "application/json; charset=utf-8",
-		//data: "Pseudo="+Pseudo+"&Password="+Password,
 		data: JSON.stringify({
 			Pseudo: pseudo,
 			Show: name,

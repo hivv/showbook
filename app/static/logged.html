@@ -53,13 +53,14 @@
 					results.innerHTML += html;
 				},
 				error:function(){
-					alert("Token non valide");
+					//alert("Token non valide");
+					document.location.href="index.html"
 				},
 				default: function(){
 					alert("défaut");
 				}             
 			});
-			for(i=0;i<3;i++){
+			/*for(i=0;i<3;i++){
 				$.getJSON('/_get_events_infos/',{n: i	},function(data){
 				//type: "GET",
 				//url: $SCRIPT_ROOT + "/_get_events_infos/",
@@ -74,7 +75,22 @@
 					var results = document.getElementById('events');
 					results.innerHTML += html;
 				});
-			}
+			}*/
+			$.getJSON('/events',function(data){
+				var l = data.length;
+				for(i=0;i<l;i++) {
+					console.log(data[i].name);
+					name=data[i].name;
+					pic=data[i].img;
+					date=data[i].date;
+					idShow=data[i].id;
+					console.log(idShow);
+					html =' <div class="col-md-4"><h2>'+name+'</h2> <img src="'+pic+'"'+' alt="Show" height="190" width="135"> <br><br> <p>'+date+'</p><p><a class="btn btn-default" href="#" role="button" onclick="setShow('+idShow+')">Book »</a></p></div>';
+					results = document.getElementById('events');
+					results.innerHTML += html;
+				}
+			});
+			
 
 		}       
 			

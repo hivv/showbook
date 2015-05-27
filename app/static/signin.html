@@ -36,6 +36,8 @@
               var Password = $('#Password').val();
               var YearOfBirth = $('#YearOfBirth').val(); 
               var PhoneNumber = $('#PhoneNumber').val();
+              var Taste = $('#Taste').val();
+              
               if(Pseudo=='' || FirstName=='' || Surname=='' || Email=='' || Password=='' || YearOfBirth=='' || PhoneNumber==''){
 				   document.getElementById("generalError").innerHTML ='<div class="alert alert-error"><a href="#" class="close" data-dismiss="alert">&times;</a> <strong>Warning!</strong> All the fields must be fullfiled </div>';
 			}else if(err>0){
@@ -54,7 +56,8 @@
 						Email: Email,
 						Password: Password,
 						YearOfBirth: YearOfBirth,
-						PhoneNumber: PhoneNumber
+						PhoneNumber: PhoneNumber,
+						Taste: Taste
 					}),
 					success: function(data){
 						if ( data['success']) { 
@@ -140,11 +143,11 @@
             <input placeholder="Year of Birth" class="form-control" type="number" min="1918" max="1997" id="YearOfBirth" onBlur="verifYear(this)">
             <input placeholder="Phone Number" class="form-control" type="tel" id="PhoneNumber" onBlur="verifNum(this)">
             <p>  <font color="white">The perfect show's night...</font>
-              <select name="type">
-                <option value="Low">Enjoying the show, then bed!</option>
-                <option value="Medium">Eating together, Enjoying the show, then bed!</option>
-                <option value="Hight">Enjoying the Show, Having a beer, and have fun!</option>
-                <option value="VeryHight">Enjoying the Show and after all night long!</option>
+              <select name="type" id="Taste">
+                <option value="1">Enjoying the show, then bed!</option>
+                <option value="2">Eating together, Enjoying the show, then bed!</option>
+                <option value="3">Enjoying the Show, Having a beer, and have fun!</option>
+                <option value="4">Enjoying the Show and after all night long!</option>
               </select>
             </p>
           </br>

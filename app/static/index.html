@@ -41,7 +41,6 @@
 						console.log(data['token']);
 						// Check browser support
 						if (typeof(Storage) != "undefined") {
-							// Store
 							localStorage.setItem("token", data['token']);
 							document.location.href="logged.html" ;
 						} else {
@@ -62,25 +61,31 @@
 		} 
 		
 		window.onload=function(){
-			for(i=0;i<3;i++){
-				 $.getJSON('/_get_events_infos/',{n: i	},function(data){
-				//type: "GET",
-				//url: $SCRIPT_ROOT + "/_get_events_infos/",
-				//contentType: "application/json; charset=utf-8",
-				//success: function(data) {
-					console.log(data.name);
-					var name=data.name;
-					var pic=data.img;
-					var date=data.date;
-					var html =' <div class="col-md-4"><h2>'+name+'</h2> <img src="'+pic+'"'+' alt="Show" height="190" width="135"> <br><br> <p>'+date+'</p><p><a class="btn btn-default" href="#" role="button">Book »</a></p></div>';
-					var results = document.getElementById('events');
+			$.getJSON('/events',function(data){
+				var l = 3;
+				for(i=0;i<l;i++) {
+					console.log(data[i].name);
+					name=data[i].name;
+					pic=data[i].img;
+					date=data[i].date;
+					idShow=data[i].id;
+					console.log(idShow);
+					html =' <div class="col-md-4"><h2>'+name+'</h2> <img src="'+pic+'"'+' alt="Show" height="190" width="135"> <br><br> <p>'+date+'</p></div>';
+					results = document.getElementById('events');
 					results.innerHTML += html;
-					console.log(html);
-				});
-			}
+				}
+			});
 
 		}
-</script>        
+	</script> 
+	<script>
+		function runScript(e) {
+			if (e.keyCode == 13) {
+				loginResult();
+				return false;
+			}
+		}
+	</script>
 	</script>
 
     <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
@@ -106,10 +111,10 @@
         <div id="navbar" class="navbar-collapse collapse">
           <form class="navbar-form navbar-right">
             <div class="form-group">
-              <input placeholder="Pseudo" class="form-control" type="text" id="Pseudo">
+              <input placeholder="Pseudo" class="form-control" type="text" id="Pseudo" onkeypress="return runScript(event)">
             </div>
             <div class="form-group">
-              <input placeholder="Password" class="form-control" type="password" id="Password">
+              <input placeholder="Password" class="form-control" type="password" id="Password" onkeypress="return runScript(event)">
             </div>
             <button type="button" class="btn btn-success" id="login" onclick="loginResult()">log in</button>
           </form>

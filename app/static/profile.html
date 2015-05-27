@@ -81,19 +81,23 @@
 				Token: tok
 			}),
 			success: function(data){
-				var html= '<table class="table table-striped"><thead><tr><th>Name</th><th>Date</th><th>Venue</th><th>Categorie</th><th>Number of tickets</th><th>Who will I meet?</th></tr></thead>'
+				var html= '<table class="table table-striped"><thead><tr><th>Name</th><th>Date</th><th>Venue</th><th>Categorie</th><th>Number of tickets</th><th>Who will I meet?</th></tr></thead>';
 				console.log(data);
-				console.log(data[0]['name']);
+				console.log(data[0]['person']);
+				
 				l = data.length;
 				html += '<tbody>';
 				for(i=0; i<l; i++) {
+					var res = data[i]['date'].split("-")
+					console.log(res)
+					var fin = res[2].concat("/",res[1],"/",res[0])
+					console.log(fin)
 					html += '<tr><td>'+data[i]['name']+'</td>';
-					//date = data[i]['date'].split("-")
-					html += '<td>'+data[i]['date']+'</td>';
+					html += '<td>'+fin+'</td>';
 					html += '<td>'+data[i]['salle']+'</td>';
 					html += '<td>'+data[i]['categorie']+'</td>';
-					html += '<td>'+	data[i]['places']+'</td>';
-					html += '<td>null</td></tr>';
+					html += '<td>'+data[i]['places']+'</td>';
+					html += '<td>'+data[i]['person']+'</td></tr>';
 				}
 				html += ' </tbody>'
 				var results= document.getElementById('MyShows');

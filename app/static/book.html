@@ -59,11 +59,8 @@
 			});
 			var a=localStorage.getItem("numShow");
 				 $.getJSON('/_get_events_book/',{n: a	},function(data){
-				//type: "GET",
-				//url: $SCRIPT_ROOT + "/_get_events_infos/",
-				//contentType: "application/json; charset=utf-8",
-				//success: function(data) {
 					console.log(data.name);
+					console.log(data.c1);
 					name=data.name;
 					var pic=data.img;
 					var date=data.date;
@@ -82,7 +79,9 @@
 					var txtPlan='<img src="'+data.plan+'" class="img-responsive">';
 					var res2=document.getElementById('plan');
 					res2.innerHTML+=txtPlan;
+					console.log(data.c1);
 					console.log(data.c2);
+					console.log(data.nb2);
 					var cat= '<select name="Category" id="catChoose"> <option value="'+data.c1+'">'+data.c1 +'</option>';
 					if(data.c2!=null){
 						cat += '<option value="'+data.c2+'">'+data.c2+'</option>';
@@ -91,15 +90,28 @@
 						}
 					}
 
-					data+='</select>';
+					cat+='</select>';
 					var rescat=document.getElementById('cat');
 					rescat.innerHTML +=cat;
 					
+					console.log(data.nb2);
+					var places = '<table class="table table-striped"><thead><tr><th>Category</th><th>Number of remaning places</th></tr></thead>';
+					places += '<tbody>';
+					console.log(data.c1);
+					console.log(data.nb1);
+					places += '<tr><td>'+data.c1+'</td><td align="center">'+data.nb1+'</td><tr>';
+					if(data.c2!=null){
+						places += '<tr><td>'+data.c2+'</td><td align="center">'+data.nb2+'</td><tr>';
+						if(data.c3!=null){
+							places += '<tr><td>'+data.c3+'</td><td align="center">'+data.nb3+'</td><tr>';
+						}
+					}
+					places += ' </tbody>'
 					
+					var resplace=document.getElementById('place');
+					resplace.innerHTML += places;
 				});
-
-		}
-		
+		}	
     </script>
 	
   </head>
@@ -154,15 +166,19 @@
               <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-body" id="plan">
-
-                    </div>
+						
+					</div>
                 </div>
               </div>
             </div>
+            
           </p>
           <div id="cat">
-
-		</div>
+		  
+		  </div>
+		  <div id="place">
+		  
+		  </div>
        </div>
         <div class="col-md-4">
           <h2>How?</h2>

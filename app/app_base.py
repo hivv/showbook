@@ -72,19 +72,19 @@ def hashFor(password):
     salted = '%s @ %s' % (SALT, password)
     return hashlib.sha256(salted).hexdigest()   
 
-db = engine.connect();
-db.execute(users.insert().values(login='admin', password_hash=hashFor('admin')))
-db.execute(users.insert().values(login='aaa', password_hash=hashFor('aaa')))
-db.execute(salles.insert().values(name='Theatre Royal Wakefield', link='http://www.theatreroyalwakefield.co.uk',plan='/static/img/plan1.gif', c1='Stalls', c2='Dress Circle', c3='Upper Circle', n1=200, n2=150, n3=100, nb_places=450))
-db.execute(salles.insert().values(name='Zenith de Paris', link='http://www.zenith-paris.com',plan='/static/img/plan3.jpg', c1='Floor', c2='Bench', n1=400, n2=200, nb_places=600))
-db.execute(salles.insert().values(name='Barnfield Theatre', link='http://www.barnfieldtheatre.org.uk/',plan='/static/img/plan2.jpg', c1='Unique Category', n1=300, nb_places=300))
-db.execute(events.insert().values(name='Hearscape',description='Hearscape is cool but unknown', img='/static/img/hearscape.png',date=datetime.date(2015, 06, 21),salle=1))
-db.execute(events.insert().values(name='Rolling Stones',description='The Rolling Stones are one of the biggest Rock Band ever',img='/static/img/stones.jpg',date = datetime.date(2015,07,23),salle=3))
-db.execute(events.insert().values(name='Archive',description='Archive is an English trip-hop and progressive rock band very appreciated in France',img='/static/img/archive.jpg',date = datetime.date(2015,8,11),salle=3))
-db.execute(events.insert().values(name='Slash',description='Slash has many hair and a beautiful guitar',img='/static/img/slash.jpg',date = datetime.date(2015,11,12),salle=2))
-db.execute(events.insert().values(name='Susan Boyle',description='Susan has eaten many things in her life',img='/static/img/boyle.jpg',date = datetime.date(2015,10,15),salle=1))
-db.execute(events.insert().values(name='Patrick Sebastien',description='Patrick Sebastien is a funny french guy',img='/static/img/sebastien.jpg',date = datetime.date(2015,12,25),salle=2))
-db.close()
+#db = engine.connect();
+#db.execute(users.insert().values(login='admin', password_hash=hashFor('admin')))
+#db.execute(users.insert().values(login='aaa', password_hash=hashFor('aaa')))
+#db.execute(salles.insert().values(name='Theatre Royal Wakefield', link='http://www.theatreroyalwakefield.co.uk',plan='/static/img/plan1.gif', c1='Stalls', c2='Dress Circle', c3='Upper Circle', n1=200, n2=150, n3=100, nb_places=450))
+#db.execute(salles.insert().values(name='Zenith de Paris', link='http://www.zenith-paris.com',plan='/static/img/plan3.jpg', c1='Floor', c2='Bench', n1=400, n2=200, nb_places=600))
+#db.execute(salles.insert().values(name='Barnfield Theatre', link='http://www.barnfieldtheatre.org.uk/',plan='/static/img/plan2.jpg', c1='Unique Category', n1=300, nb_places=300))
+#db.execute(events.insert().values(name='Hearscape',description='Hearscape is cool but unknown', img='/static/img/hearscape.png',date=datetime.date(2015, 06, 21),salle=1))
+#db.execute(events.insert().values(name='Rolling Stones',description='The Rolling Stones are one of the biggest Rock Band ever',img='/static/img/stones.jpg',date = datetime.date(2015,07,23),salle=3))
+#db.execute(events.insert().values(name='Archive',description='Archive is an English trip-hop and progressive rock band very appreciated in France',img='/static/img/archive.jpg',date = datetime.date(2015,8,11),salle=3))
+#db.execute(events.insert().values(name='Slash',description='Slash has many hair and a beautiful guitar',img='/static/img/slash.jpg',date = datetime.date(2015,11,12),salle=2))
+#db.execute(events.insert().values(name='Susan Boyle',description='Susan has eaten many things in her life',img='/static/img/boyle.jpg',date = datetime.date(2015,10,15),salle=1))
+#db.execute(events.insert().values(name='Patrick Sebastien',description='Patrick Sebastien is a funny french guy',img='/static/img/sebastien.jpg',date = datetime.date(2015,12,25),salle=2))
+#db.close()
 
 def matching(id_show,id_user) :
 	db = engine.connect()
@@ -270,9 +270,11 @@ def getEventInfo(idShow):
 		db.close()
 	
 def addEvent(name,description,img,year,month,day,salle):
+
 	db = engine.connect()
 	try:
 		db.execute(events.insert().values(name=name,description=description,img=img,date = datetime.date(year,month,day),salle=salle))
+		print 'coucou'
 		return True
 	except:
 		return False
@@ -407,12 +409,16 @@ def userUpdate():
 		return json.dumps({'success':res})
 	else :
 		return json.dumps({'success':False})
-
+@app.route('/createEvent', methods=['POST'])
+def newEvent():
+	dat=request.get_json(force=True)
+	addEvent(dat['Name'],dat['Description'],dat['Image'],int(dat['Year']),int(dat['Month']),int(dat['Day']),int(dat['Salle']))
+	return json.dumps({'success': True})
 
 # ............................................................................................... #
 
 if __name__ == '__main__':
-	app.run(debug=True)
+	app.run(debug=True, use_reloader=False)
 	#use_reloader=False
 # ............................................................................................... #
 

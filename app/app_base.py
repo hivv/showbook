@@ -99,7 +99,7 @@ def matching(id_show,id_user) :
 		
 		usr = select([users.c.date_naissance,users.c.Taste,users.c.id]).where(users.c.id == row[1])
 		us = db.execute(usr).fetchone()	
-		if (us[1] == choix) and (fabs(us[0] - birth) <= 3 ) and (us[2] != id_user) and (row[2] == id_show):
+		if (us[1] == choix) and (birth != None and fabs(us[0] - birth) <= 3) and (us[2] != id_user) and (row[2] == id_show):
 			db.execute(reservations.update().where(and_(reservations.c.id_User == id_user,reservations.c.id_Event == id_show)).values(user_meet = us[2]))
 			db.execute(reservations.update().where(and_(reservations.c.id_User == us[2],reservations.c.id_Event == id_show)).values(user_meet = id_user))
 			return 0
